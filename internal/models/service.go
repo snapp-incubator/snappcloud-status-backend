@@ -1,6 +1,6 @@
 package models
 
 type Service struct {
-	Name   string  `json:"name"`
-	States []State `json:"states"`
+	Name   string            `json:"name"`
+	Status map[Region]Status `json:"status"`
 }
