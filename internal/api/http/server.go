@@ -21,7 +21,7 @@ func New(cfg *Config, log *zap.Logger) *Server {
 	server.app = fiber.New(fiber.Config{JSONEncoder: json.Marshal, JSONDecoder: json.Unmarshal})
 
 	v1 := server.app.Group("api/v1")
-	v1.Get("/status", server.status)
+	v1.Get("/services", server.services)
 
 	return server
 }
