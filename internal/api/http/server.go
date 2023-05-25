@@ -9,14 +9,12 @@ import (
 )
 
 type Server struct {
-	config *Config
 	logger *zap.Logger
-
-	app *fiber.App
+	app    *fiber.App
 }
 
-func New(cfg *Config, log *zap.Logger) *Server {
-	server := &Server{config: cfg, logger: log}
+func New(log *zap.Logger) *Server {
+	server := &Server{logger: log}
 
 	server.app = fiber.New(fiber.Config{JSONEncoder: json.Marshal, JSONDecoder: json.Unmarshal})
 
@@ -26,9 +24,8 @@ func New(cfg *Config, log *zap.Logger) *Server {
 	return server
 }
 
-func (server *Server) Serve() error {
-	addr := fmt.Sprintf(":%d", server.config.ListenPort)
-	if err := server.app.Listen(addr); err != nil {
+func (server *Server) Serve(port int) error {
+	if err := server.app.Listen(fmt.Sprintf(":%d", port)); err != nil {
 		server.logger.Error("error resolving server", zap.Error(err))
 		return err
 	}
