@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"go.uber.org/zap"
 )
 
@@ -17,6 +18,7 @@ func New(log *zap.Logger) *Server {
 	server := &Server{logger: log}
 
 	server.app = fiber.New(fiber.Config{JSONEncoder: json.Marshal, JSONDecoder: json.Unmarshal})
+	server.app.Use(cors.New())
 
 	v1 := server.app.Group("api/v1")
 	v1.Get("/services", server.services)
