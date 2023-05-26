@@ -6,4 +6,5 @@ const (
 	Operational Status = 1
 	Warning     Status = 2
 	Outage      Status = 3
+	Unknown     Status = 4
 )
