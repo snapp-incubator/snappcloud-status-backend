@@ -8,6 +8,14 @@ import (
 	"github.com/snapp-incubator/snappcloud-status-backend/internal/models"
 )
 
+func (handler *Server) liveness(c *fiber.Ctx) error {
+	return c.SendStatus(http.StatusOK)
+}
+
+func (handler *Server) readiness(c *fiber.Ctx) error {
+	return c.SendStatus(http.StatusOK)
+}
+
 func (handler *Server) services(c *fiber.Ctx) error {
 	templates := []struct {
 		name      string

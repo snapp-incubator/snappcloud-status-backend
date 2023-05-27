@@ -23,6 +23,10 @@ func New(log *zap.Logger) *Server {
 	v1 := server.app.Group("api/v1")
 	v1.Get("/services", server.services)
 
+	healthz := server.app.Group("healthz")
+	healthz.Get("/liveness", server.liveness)
+	healthz.Get("/readiness", server.readiness)
+
 	return server
 }
 

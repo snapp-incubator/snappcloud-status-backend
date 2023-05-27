@@ -41,12 +41,16 @@ spec:
               protocol: {{ .Values.service.protocol }}
           livenessProbe:
             httpGet:
-              path: /
+              path: /healthz/liveness
               port: http
           readinessProbe:
+            failureThreshold: 3
             httpGet:
-              path: /
+              path: /healthz/readiness
               port: http
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           envFrom:
