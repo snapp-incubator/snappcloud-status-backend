@@ -3,10 +3,10 @@
 # Declare variables to be passed into your templates.
 
 image:
-  repository: ghcr.io/snapp-incubator/snappcloud-status-backend:latest 
+  repository: ghcr.io/snapp-incubator/snappcloud-status-backend 
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""

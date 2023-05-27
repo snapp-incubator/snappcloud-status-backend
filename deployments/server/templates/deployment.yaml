@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "snappcloud-status-backend-server.fullname" . }}
+  name: {{ include "snappcloud-status-backend.fullname" . }}
   labels:
-    {{- include "snappcloud-status-backend-server.labels" . | nindent 4 }}
+    {{- include "snappcloud-status-backend.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "snappcloud-status-backend-server.selectorLabels" . | nindent 6 }}
+      {{- include "snappcloud-status-backend.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "snappcloud-status-backend-server.selectorLabels" . | nindent 8 }}
+        {{- include "snappcloud-status-backend.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "snappcloud-status-backend-server.serviceAccountName" . }}
+      serviceAccountName: {{ include "snappcloud-status-backend.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -33,10 +33,12 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - server
           ports:
             - name: http
-              containerPort: 80
-              protocol: TCP
+              containerPort: {{ .Values.service.port }}
+              protocol: {{ .Values.service.protocol }}
           livenessProbe:
             httpGet:
               path: /
@@ -47,6 +49,9 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "heliograph.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

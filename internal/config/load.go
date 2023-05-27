@@ -15,7 +15,7 @@ const (
 	delimeter = "."
 	seperator = "__"
 
-	envPrefix = "AUTH_"
+	envPrefix = "SNAPPCLOUD_STATUS_BACKEND__"
 
 	tagName = "koanf"
 
