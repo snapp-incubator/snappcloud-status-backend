@@ -1,6 +1,6 @@
 # SnappCloud Status Backend
 
-This project aims to provide the backend for `snappcloud-status-frontend` application to observer applications healthness in SnappCloud.
+This project aims to provide the backend for `snappcloud-status-frontend` application to observe applications healthness in SnappCloud.
 
 ## Deployment
 
