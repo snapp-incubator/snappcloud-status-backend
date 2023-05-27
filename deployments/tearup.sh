@@ -13,8 +13,8 @@ if [ ! -d "$path_to_k8s" ]; then
     exit 9999 # die with error code 9999
 fi
 
-echo "tearup heliograph-$cmd ..."
+echo "tearup snappcloud-status-backend-$cmd ..."
 
-helm upgrade --install "heliograph-$cmd" "$path_to_k8s" \
+helm upgrade --install "snappcloud-status-backend-$cmd" "$path_to_k8s" \
 	-f "$path_to_k8s/values.yaml" \
 	-f "$path_to_k8s/overrides/$override.yaml"

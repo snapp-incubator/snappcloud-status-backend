@@ -51,7 +51,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           envFrom:
             - configMapRef:
-                name: {{ include "heliograph.fullname" . }}
+                name: {{ include "snappcloud-status-backend.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

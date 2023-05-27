@@ -12,6 +12,6 @@ if [ ! -d "$path_to_k8s" ]; then
     exit 9999 # die with error code 9999
 fi
 
-echo "teardown heliograph-$cmd ..."
+echo "teardown snappcloud-status-backend-$cmd ..."
 
-helm uninstall "heliograph-$cmd"
+helm uninstall "snappcloud-status-backend-$cmd"
