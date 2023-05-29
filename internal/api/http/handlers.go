@@ -4,19 +4,19 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/snapp-incubator/snappcloud-status-backend/internal/models"
 )
 
-func (handler *Server) liveness(c *fiber.Ctx) error {
-	return c.SendStatus(http.StatusOK)
+func (handler *Server) liveness(c *gin.Context) {
+	c.Status(http.StatusOK)
 }
 
-func (handler *Server) readiness(c *fiber.Ctx) error {
-	return c.SendStatus(http.StatusOK)
+func (handler *Server) readiness(c *gin.Context) {
+	c.Status(http.StatusOK)
 }
 
-func (handler *Server) services(c *fiber.Ctx) error {
+func (handler *Server) services(c *gin.Context) {
 	templates := []struct {
 		name      string
 		operation func(map[models.Region]models.Status)
@@ -67,17 +67,11 @@ func (handler *Server) services(c *fiber.Ctx) error {
 	wg.Wait()
 
 	// c.Response().Header.Add("Content-Type", "application/json")
-	// rw.Header().Set("Content-Type", "application/json")
-	// 	rw.Header().Set("Content-Length", fmt.Sprint(len(response)))
 
-	err := c.Status(http.StatusOK).JSON(&response{
+	c.JSON(http.StatusOK, &response{
 		Message:  "All services retrieved successfuly.",
 		Services: services,
 	})
-	c.Set("Content-type", "application/json; charset=utf-8")
-	// c.Set("Access-Control-Allow-Origin", "origin-list")
-	// Access-Control-Allow-Origin
-	return err
 }
 
 // TODO: implement
