@@ -3,19 +3,19 @@ package http
 import (
 	"fmt"
 
-	// "github.com/gofiber/fiber/v2"
-	// "github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/snapp-incubator/snappcloud-status-backend/internal/querier"
 	"go.uber.org/zap"
 )
 
 type Server struct {
-	logger *zap.Logger
-	engine *gin.Engine
+	logger  *zap.Logger
+	querier querier.Querier
+	engine  *gin.Engine
 }
 
-func New(log *zap.Logger) *Server {
-	server := &Server{logger: log, engine: gin.Default()}
+func New(log *zap.Logger, querier querier.Querier) *Server {
+	server := &Server{logger: log, querier: querier, engine: gin.Default()}
 
 	server.engine.Use(server.corsMiddleware())
 

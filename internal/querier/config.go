@@ -8,9 +8,8 @@ type Config struct {
 		Teh2       string `koanf:"teh2"`
 		SnappGroup string `koanf:"snappgroup"`
 	} `koanf:"thanos_frontends"`
-
 	RequestInterval time.Duration   `koanf:"request_interval"`
-	services        []ServiceConfig `koanf:"services"`
+	Services        []ServiceConfig `koanf:"services"`
 }
 
 type ServiceConfig struct {

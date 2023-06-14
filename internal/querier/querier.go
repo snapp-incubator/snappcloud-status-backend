@@ -2,39 +2,72 @@ package querier
 
 import (
 	"sort"
+	"time"
 
 	"github.com/snapp-incubator/snappcloud-status-backend/internal/models"
 )
 
 type Querier interface {
-	GetState() map[string]any
+	GetServices() []models.Service
+	Start()
+	Stop()
 }
 
 type querier struct {
 	config   *Config
+	ticker   *time.Ticker
+	done     chan bool
 	services []models.Service
 }
 
-func New() Querier {
-	instance := &querier{}
-
-	return instance
+func New(cfg *Config) Querier {
+	return &querier{
+		config:   cfg,
+		ticker:   time.NewTicker(cfg.RequestInterval),
+		done:     make(chan bool),
+		services: initializeServices(cfg.Services),
+	}
 }
 
-func (q *querier) buildInitialState() {
-	services := make([]models.Service, 0, len(q.config.services))
+func initializeServices(config []ServiceConfig) []models.Service {
+	services := make([]models.Service, 0, len(config))
 
-	sort.Slice(q.config.services, func(i, j int) bool {
-		return q.config.services[i].Order < q.config.services[j].Order
+	sort.Slice(config, func(i, j int) bool {
+		return config[i].Order < config[j].Order
 	})
 
-	q.services = services
+	for index := 0; index < len(config); index++ {
+		services = append(services, models.Service{
+			Name:  config[index].Name,
+			Query: config[index].Query,
+			Status: map[models.Region]models.Status{
+				models.Teh1:       models.Unknown,
+				models.Teh2:       models.Unknown,
+				models.SnappGroup: models.Unknown,
+			},
+		})
+	}
+
+	return services
 }
 
-func sortServices() {
-
+// Start, run this function in a seperate goroutine
+func (q *querier) Start() {
+	for {
+		select {
+		case <-q.done:
+			return
+		case <-q.ticker.C:
+			q.Query()
+		}
+	}
 }
 
-func (q *querier) GetState() map[string]any {
-	return map[string]any{}
+func (q *querier) Stop() {
+	q.ticker.Stop()
+	q.done <- true
+}
+
+func (q *querier) GetServices() []models.Service {
+	return q.services
 }

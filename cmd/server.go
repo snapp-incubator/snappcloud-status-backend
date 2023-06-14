@@ -5,6 +5,7 @@ import (
 
 	"github.com/snapp-incubator/snappcloud-status-backend/internal/api/http"
 	"github.com/snapp-incubator/snappcloud-status-backend/internal/config"
+	"github.com/snapp-incubator/snappcloud-status-backend/internal/querier"
 	"github.com/snapp-incubator/snappcloud-status-backend/pkg/logger"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -27,10 +28,15 @@ func (cmd Server) Command(trap chan os.Signal) *cobra.Command {
 func (cmd *Server) main(cfg *config.Config, trap chan os.Signal) {
 	logger := logger.NewZap(cfg.Logger)
 
-	server := http.New(logger)
+	querier := querier.New(cfg.Querier)
+	go querier.Start()
+
+	server := http.New(logger, querier)
 	go server.Serve(8080)
 
 	// Keep this at the bottom of the main function
 	field := zap.String("signal trap", (<-trap).String())
 	logger.Info("exiting by receiving a unix signal", field)
+
+	querier.Stop()
 }
