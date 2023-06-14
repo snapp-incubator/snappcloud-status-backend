@@ -1,10 +1,10 @@
 package models
 
-type Status uint8
+type Status string
 
 const (
-	Operational Status = 1
-	Warning     Status = 2
-	Outage      Status = 3
-	Unknown     Status = 4
+	Operational Status = "operational"
+	Disruption  Status = "disruption"
+	Outage      Status = "outage"
+	Unknown     Status = "unknown"
 )

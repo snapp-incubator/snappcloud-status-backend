@@ -28,7 +28,7 @@ func (cmd Server) Command(trap chan os.Signal) *cobra.Command {
 func (cmd *Server) main(cfg *config.Config, trap chan os.Signal) {
 	logger := logger.NewZap(cfg.Logger)
 
-	querier := querier.New(cfg.Querier)
+	querier := querier.New(cfg.Querier, logger)
 	go querier.Start()
 
 	server := http.New(logger, querier)

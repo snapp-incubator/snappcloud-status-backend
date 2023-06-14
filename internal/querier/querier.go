@@ -2,9 +2,11 @@ package querier
 
 import (
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/snapp-incubator/snappcloud-status-backend/internal/models"
+	"go.uber.org/zap"
 )
 
 type Querier interface {
@@ -14,12 +16,14 @@ type Querier interface {
 }
 
 type querier struct {
-	config *Config
+	config  *Config
+	loggger *zap.Logger
 
 	ticker *time.Ticker
 	done   chan bool
 
 	states   []state
+	mutex    sync.RWMutex
 	services []models.Service
 }
 
@@ -28,13 +32,15 @@ type state struct {
 	config ServiceConfig
 }
 
-func New(cfg *Config) Querier {
-	instance := &querier{config: cfg}
+func New(cfg *Config, lg *zap.Logger) Querier {
+	instance := &querier{config: cfg, loggger: lg}
 
 	instance.ticker = time.NewTicker(cfg.RequestInterval)
 	instance.done = make(chan bool)
 
+	instance.mutex = sync.RWMutex{}
 	instance.initializeState()
+	instance.generateServices()
 
 	return instance
 }
@@ -79,10 +85,12 @@ func (q *querier) generateServices() {
 	services := make([]models.Service, 0, len(q.states))
 
 	for index := 0; index < len(q.states); index++ {
+		q.mutex.RLock()
 		services = append(services, models.Service{
 			Name:   q.states[index].config.Name,
 			Status: q.states[index].status,
 		})
+		q.mutex.RUnlock()
 	}
 
 	q.services = services

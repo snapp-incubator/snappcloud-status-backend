@@ -1,9 +1,9 @@
 package models
 
-type Region uint8
+type Region string
 
 const (
-	Teh1       Region = 1
-	Teh2       Region = 2
-	SnappGroup Region = 3
+	Teh1       Region = "teh1"
+	Teh2       Region = "teh2"
+	SnappGroup Region = "snappgroup"
 )
