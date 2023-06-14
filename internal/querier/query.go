@@ -8,9 +8,9 @@ import (
 
 func (q *querier) Query() {
 	var wg sync.WaitGroup
-	wg.Add(len(q.services))
+	wg.Add(len(q.states))
 
-	for index := 0; index < len(q.services); index++ {
+	for index := 0; index < len(q.states); index++ {
 		go func(index int) {
 			defer wg.Done()
 

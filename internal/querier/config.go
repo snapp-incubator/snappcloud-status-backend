@@ -13,7 +13,10 @@ type Config struct {
 }
 
 type ServiceConfig struct {
-	Name  string `koanf:"name"`
-	Order int    `koanf:"order"`
-	Query string `koanf:"query"`
+	Name    string `koanf:"name"`
+	Order   int    `koanf:"order"`
+	Queries struct {
+		Outage     string `koanf:"outage"`
+		Disruption string `koanf:"disruption"`
+	} `koanf:"queries"`
 }
