@@ -9,6 +9,7 @@ type Config struct {
 		SnappGroup string `koanf:"snappgroup"`
 	} `koanf:"thanos_frontends"`
 	RequestInterval time.Duration   `koanf:"request_interval"`
+	RequestTimeout  time.Duration   `koanf:"request_timeout"`
 	Services        []ServiceConfig `koanf:"services"`
 }
 

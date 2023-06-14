@@ -1,13 +1,15 @@
 package config
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"strings"
 
 	"github.com/davecgh/go-spew/spew"
+	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"
-	"github.com/knadh/koanf/providers/structs"
+	"github.com/knadh/koanf/providers/rawbytes"
 	"github.com/knadh/koanf/v2"
 )
 
@@ -27,12 +29,13 @@ func Load(print bool) *Config {
 	k := koanf.New(delimeter)
 
 	// load default configuration from file
-	if err := k.Load(structs.Provider(Default(), "koanf"), nil); err != nil {
-		log.Fatalf("error loading default: %s", err)
+	if err := LoadValues(k); err != nil {
+		log.Fatalf("error loading default values: \n%v", err)
 	}
 
+	// load default configuration from environment variables
 	if err := loadEnv(k); err != nil {
-		log.Printf("error loading environment variables: %v", err)
+		log.Printf("error loading environment variables: \n%v", err)
 	}
 
 	config := Config{}
@@ -47,6 +50,17 @@ func Load(print bool) *Config {
 	}
 
 	return &config
+}
+
+//go:embed values.yml
+var values []byte
+
+func LoadValues(k *koanf.Koanf) error {
+	if err := k.Load(rawbytes.Provider(values), yaml.Parser()); err != nil {
+		return fmt.Errorf("error loading values: %s", err)
+	}
+
+	return nil
 }
 
 func loadEnv(k *koanf.Koanf) error {
