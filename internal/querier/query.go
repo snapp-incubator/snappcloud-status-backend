@@ -102,8 +102,6 @@ func (q *querier) queryThanos(region models.Region, query string, timestamp stri
 		}.Encode()
 
 		request, _ := http.NewRequest("GET", requestURL.String(), nil)
-		// TODO: dynamic the headers
-		request.Header.Set("Cookie", "_oauth_proxy=bW9oYW1tYWQubmFzcmVzZmFoYW5pQGNsdXN0ZXIubG9jYWw=|1686652811|77SxiUsdugEe4F7iR5rk8Cx9amY=")
 		request = request.WithContext(ctx)
 
 		client := http.Client{Timeout: q.config.RequestTimeout}
