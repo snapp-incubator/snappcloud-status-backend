@@ -70,10 +70,14 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 
 tolerations: []
 
 affinity: {}
+
+env:
+  querier__thanos_frontends__teh1: "http://thanos-query-frontend-http:9090/api/v1/query"
+  querier__thanos_frontends__teh2: "http://thanos-query-frontend-http:9090/api/v1/query"
+  querier__thanos_frontends__snappgroup: "http://thanos-query-frontend-http:9090/api/v1/query"
