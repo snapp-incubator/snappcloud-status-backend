@@ -77,6 +77,9 @@ tolerations: []
 
 affinity: {}
 
+serviceMonitor:
+  enabled: true
+
 env:
   querier__thanos_frontends__teh1: "http://thanos-query-frontend-http:9090/api/v1/query"
   querier__thanos_frontends__teh2: "http://thanos-query-frontend-http:9090/api/v1/query"
