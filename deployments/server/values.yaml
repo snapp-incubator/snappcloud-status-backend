@@ -80,7 +80,7 @@ affinity: {}
 serviceMonitor:
   enabled: true
 
-env:
+envs:
   querier__thanos_frontends__teh1: "http://thanos-query-frontend-http.openshift-monitoring.svc.cluster.local:9090/api/v1/query"
   querier__thanos_frontends__teh2: "http://thanos-query-frontend-http.openshift-monitoring.svc.cluster.local:9090/api/v1/query"
   querier__thanos_frontends__snappgroup: "http://thanos-query-frontend-http.openshift-monitoring.svc.cluster.local:9090/api/v1/query"
