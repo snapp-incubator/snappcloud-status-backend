@@ -27,9 +27,8 @@ We normally deploy our production applications via `argoCD` and staging applicat
 oc project your-desired-namespace # set your namespace
 
 cmd=<cmd> # server
-override=<override> # production, staging
 
-./deployments/tearup.sh $cmd $override
+./deployments/tearup.sh $cmd
 ```
 
 ### Uninstallation
