@@ -27,40 +27,37 @@ func (q *querier) Query() {
 		go func(index int) {
 			defer wg.Done()
 
-			//
-			for _, region := range []models.Region{models.Teh1, models.Teh2, models.SnappGroup} {
-				go func(region models.Region) {
-					// operator will do the query operation
-					operator := func(query string, badRes models.Status) bool {
-						result := q.queryThanos(region, query, timestamp)
-						if result != successfulResult {
-							var status models.Status
-							if result == badResult {
-								status = badRes
-							} else {
-								status = models.Unknown
-							}
-
-							q.mutex.Lock()
-							q.states[index].status[region] = status
-							q.mutex.Unlock()
-							return false
+			go func() {
+				// operator will do the query operation
+				operator := func(query string, badRes models.Status) bool {
+					result := q.queryThanos(query, timestamp)
+					if result != successfulResult {
+						var status models.Status
+						if result == badResult {
+							status = badRes
+						} else {
+							status = models.Unknown
 						}
-						return true
-					}
 
-					// first check outage query and then check disruption query
-					if !operator(q.states[index].config.Queries.Outage, models.Outage) {
-						return
-					} else if !operator(q.states[index].config.Queries.Disruption, models.Disruption) {
-						return
+						q.mutex.Lock()
+						q.states[index].status = status
+						q.mutex.Unlock()
+						return false
 					}
+					return true
+				}
 
-					q.mutex.Lock()
-					q.states[index].status[region] = models.Operational
-					q.mutex.Unlock()
-				}(region)
-			}
+				// first check outage query and then check disruption query
+				if !operator(q.states[index].config.Queries.Outage, models.Outage) {
+					return
+				} else if !operator(q.states[index].config.Queries.Disruption, models.Disruption) {
+					return
+				}
+
+				q.mutex.Lock()
+				q.states[index].status = models.Operational
+				q.mutex.Unlock()
+			}()
 		}(index)
 	}
 
@@ -76,7 +73,7 @@ const (
 	successfulResult result = 3 // ok
 )
 
-func (q *querier) queryThanos(region models.Region, query string, timestamp string) result {
+func (q *querier) queryThanos(query string, timestamp string) result {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

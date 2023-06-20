@@ -28,7 +28,7 @@ type querier struct {
 }
 
 type state struct {
-	status map[models.Region]models.Status
+	status models.Status
 	config ServiceConfig
 }
 
@@ -53,11 +53,7 @@ func (q *querier) initializeState() {
 	q.states = make([]state, 0, len(q.config.Services))
 	for index := 0; index < len(q.config.Services); index++ {
 		q.states = append(q.states, state{
-			status: map[models.Region]models.Status{
-				models.Teh1:       models.Unknown,
-				models.Teh2:       models.Unknown,
-				models.SnappGroup: models.Unknown,
-			},
+			status: models.Unknown,
 			config: q.config.Services[index],
 		})
 	}
