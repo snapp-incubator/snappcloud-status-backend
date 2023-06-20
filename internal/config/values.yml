@@ -5,10 +5,7 @@ logger:
 querier:
   request_interval: 5s
   request_timeout: 1s
-  thanos_frontends:
-    teh1: "http://localhost:9090/api/v1/query"
-    teh2: "http://localhost:9090/api/v1/query"
-    snappgroup: "http://localhost:9090/api/v1/query"
+  thanos_frontend: "http://localhost:9090/api/v1/query"
   services:
     - order: 1
       name: "Pass"

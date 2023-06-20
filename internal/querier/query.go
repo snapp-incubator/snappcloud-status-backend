@@ -81,19 +81,9 @@ func (q *querier) queryThanos(region models.Region, query string, timestamp stri
 	defer cancel()
 
 	resultChannel := make(chan result)
-	var baseURL string
-
-	switch region {
-	case models.Teh1:
-		baseURL = q.config.ThanosFrontends.Teh1
-	case models.Teh2:
-		baseURL = q.config.ThanosFrontends.Teh2
-	case models.SnappGroup:
-		baseURL = q.config.ThanosFrontends.SnappGroup
-	}
 
 	go func() {
-		requestURL, _ := url.Parse(baseURL)
+		requestURL, _ := url.Parse(q.config.ThanosFrontend)
 		requestURL.RawQuery = url.Values{
 			"query":            []string{query},
 			"dedup":            []string{"true"},
