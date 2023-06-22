@@ -79,7 +79,7 @@ func loadConfigmap(k *koanf.Koanf) error {
 	}
 
 	// Retrieve the ConfigMap data
-	namespace, cmName := os.Getenv("POD_NAMESPACE"), "my-config"
+	namespace, cmName := os.Getenv("POD_NAMESPACE"), "spcld-status-backend-snappcloud-status-backend"
 	cm, err := clientset.CoreV1().ConfigMaps(namespace).Get(context.Background(), cmName, metav1.GetOptions{})
 	if err != nil {
 		panic(fmt.Errorf("error retrieving ConfigMap data: %v", err))
