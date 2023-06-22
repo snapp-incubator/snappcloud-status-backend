@@ -1,23 +1,24 @@
 package config
 
 import (
+	"context"
 	_ "embed"
 	"fmt"
 	"log"
-	"strings"
+	"os"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/knadh/koanf/parsers/yaml"
-	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/rawbytes"
 	"github.com/knadh/koanf/v2"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 const (
 	delimeter = "."
 	seperator = "__"
-
-	envPrefix = "SNAPPCLOUD_STATUS_BACKEND__"
 
 	tagName = "koanf"
 
@@ -33,9 +34,9 @@ func Load(print bool) *Config {
 		log.Fatalf("error loading default values: \n%v", err)
 	}
 
-	// load default configuration from environment variables
-	if err := loadEnv(k); err != nil {
-		log.Printf("error loading environment variables: \n%v", err)
+	// load default configuration from file
+	if err := loadConfigmap(k); err != nil {
+		log.Fatalf("error loading from configmap: \n%v", err)
 	}
 
 	config := Config{}
@@ -63,15 +64,29 @@ func LoadValues(k *koanf.Koanf) error {
 	return nil
 }
 
-func loadEnv(k *koanf.Koanf) error {
-	callback := func(source string) string {
-		base := strings.ToLower(strings.TrimPrefix(source, envPrefix))
-		return strings.ReplaceAll(base, seperator, delimeter)
+func loadConfigmap(k *koanf.Koanf) error {
+	kubeConfig, err := rest.InClusterConfig()
+	if err != nil {
+		if err == rest.ErrNotInCluster {
+			return nil
+		}
+		panic(fmt.Errorf("error creating Kubernetes config: \n%v", err))
 	}
 
-	// load environment variables
-	if err := k.Load(env.Provider(envPrefix, delimeter, callback), nil); err != nil {
-		return fmt.Errorf("error loading environment variables: %s", err)
+	clientset, err := kubernetes.NewForConfig(kubeConfig)
+	if err != nil {
+		panic(fmt.Errorf("error creating Kubernetes client: %v", err))
+	}
+
+	// Retrieve the ConfigMap data
+	namespace, cmName := os.Getenv("POD_NAMESPACE"), "my-config"
+	cm, err := clientset.CoreV1().ConfigMaps(namespace).Get(context.Background(), cmName, metav1.GetOptions{})
+	if err != nil {
+		panic(fmt.Errorf("error retrieving ConfigMap data: %v", err))
+	}
+
+	if err := k.Load(rawbytes.Provider([]byte(cm.Data["values.yml"])), nil); err != nil {
+		return fmt.Errorf("error loading values: %s", err)
 	}
 
 	return nil

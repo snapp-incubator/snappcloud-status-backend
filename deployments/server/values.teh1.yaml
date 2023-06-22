@@ -1,1 +1,65 @@
 region: teh-1
+
+values:
+  querier:
+    services:
+      - order: 1
+        name: "Pass"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 2
+        name: "IaaS"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 3
+        name: "Object Storage (S3)"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 4
+        name: "Container Registry"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 5
+        name: "Service LoadBalancer (L4)"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 6
+        name: "Ingress (L7)"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 7
+        name: "Proxy"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 8
+        name: "Monitoring"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 9
+        name: "Logging"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 10
+        name: "Traffic observability (Hubble)"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 11
+        name: "ArgoCD"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 12
+        name: "ArgoWF"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'

@@ -1,1 +1,25 @@
 region: snappgroup
+
+values:
+  querier:
+    services:
+      - order: 1
+        name: "Container Registry"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 2
+        name: "Service LoadBalancer (L4)"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 3
+        name: "Ingress (L7)"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'
+      - order: 4
+        name: "Proxy"
+        queries:
+          disruption: 'up{job="node-exporter"}'
+          outage: 'up{job="node-exporter"}'

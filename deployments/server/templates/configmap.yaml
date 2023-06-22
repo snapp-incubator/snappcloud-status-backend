@@ -6,8 +6,5 @@ metadata:
   labels:
     {{- include "snappcloud-status-backend.labels" . | nindent 4 }}
 data:
-  {{- range $key, $value := .Values.envs }}
-  {{- if $value }}
-  SNAPPCLOUD_STATUS_BACKEND__{{ $key | upper }}: {{ $value | quote }}
-  {{- end }}
-  {{- end }}
+  values.yml: | {{- .Values.values | toYaml | nindent 4 }}
+
