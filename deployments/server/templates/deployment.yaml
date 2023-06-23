@@ -56,11 +56,11 @@ spec:
           volumeMounts:
             - name: configs-volume
               mountPath: /etc/snappcloud-status-backend
-      {{- with .Values.nodeSelector }}
       volumes:
         - name: configs-volume
           configMap:
             name: {{ include "snappcloud-status-backend.fullname" . }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
