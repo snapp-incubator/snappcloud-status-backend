@@ -78,8 +78,13 @@ func loadConfigmap(k *koanf.Koanf) error {
 		panic(fmt.Errorf("error creating Kubernetes client: %v", err))
 	}
 
+	rawNamespace, err := os.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
+	if err != nil {
+		panic(fmt.Errorf("error reading currnet namespace: %v", err))
+	}
+
 	// Retrieve the ConfigMap data
-	namespace, cmName := os.Getenv("POD_NAMESPACE"), "spcld-status-backend-snappcloud-status-backend"
+	namespace, cmName := string(rawNamespace), "spcld-status-backend-snappcloud-status-backend"
 	cm, err := clientset.CoreV1().ConfigMaps(namespace).Get(context.Background(), cmName, metav1.GetOptions{})
 	if err != nil {
 		panic(fmt.Errorf("error retrieving ConfigMap data: %v", err))
