@@ -1,7 +1,8 @@
 region: teh-2
 
-values:
+configs:
   querier:
+    thanos_frontend: "http://thanos-query-frontend-http.openshift-monitoring.svc.cluster.local:9090/api/v1/query"
     services:
       - order: 1
         name: "Pass"

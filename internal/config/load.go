@@ -53,7 +53,7 @@ func Load(print bool) *Config {
 	return &config
 }
 
-//go:embed values.yml
+//go:embed defaults.yml
 var values []byte
 
 func LoadValues(k *koanf.Koanf) error {
@@ -85,7 +85,7 @@ func loadConfigmap(k *koanf.Koanf) error {
 		panic(fmt.Errorf("error retrieving ConfigMap data: %v", err))
 	}
 
-	if err := k.Load(rawbytes.Provider([]byte(cm.Data["values.yml"])), nil); err != nil {
+	if err := k.Load(rawbytes.Provider([]byte(cm.Data["configs.yml"])), nil); err != nil {
 		return fmt.Errorf("error loading values: %s", err)
 	}
 
