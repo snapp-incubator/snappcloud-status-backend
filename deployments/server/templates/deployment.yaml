@@ -53,7 +53,14 @@ spec:
             timeoutSeconds: 1
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: configs-volume
+              mountPath: /etc/snappcloud-status-backend
       {{- with .Values.nodeSelector }}
+      volumes:
+        - name: configs-volume
+          configMap:
+            name: {{ include "snappcloud-status-backend.fullname" . }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
