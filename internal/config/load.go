@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	_ "embed"
 	"fmt"
 	"log"
@@ -11,8 +10,6 @@ import (
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/rawbytes"
 	"github.com/knadh/koanf/v2"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )
 
@@ -65,32 +62,20 @@ func LoadValues(k *koanf.Koanf) error {
 }
 
 func loadConfigmap(k *koanf.Koanf) error {
-	kubeConfig, err := rest.InClusterConfig()
-	if err != nil {
+	// this is a hack to check wheather we are in cluster or not
+	if _, err := rest.InClusterConfig(); err != nil {
 		if err == rest.ErrNotInCluster {
 			return nil
 		}
 		panic(fmt.Errorf("error creating Kubernetes config: \n%v", err))
 	}
 
-	clientset, err := kubernetes.NewForConfig(kubeConfig)
-	if err != nil {
-		panic(fmt.Errorf("error creating Kubernetes client: %v", err))
-	}
-
-	rawNamespace, err := os.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
+	cm, err := os.ReadFile("/etc/snappcloud-status-backend/configs.yml")
 	if err != nil {
 		panic(fmt.Errorf("error reading currnet namespace: %v", err))
 	}
 
-	// Retrieve the ConfigMap data
-	namespace, cmName := string(rawNamespace), "spcld-status-backend-snappcloud-status-backend"
-	cm, err := clientset.CoreV1().ConfigMaps(namespace).Get(context.Background(), cmName, metav1.GetOptions{})
-	if err != nil {
-		panic(fmt.Errorf("error retrieving ConfigMap data: %v", err))
-	}
-
-	if err := k.Load(rawbytes.Provider([]byte(cm.Data["configs.yml"])), nil); err != nil {
+	if err := k.Load(rawbytes.Provider(cm), nil); err != nil {
 		return fmt.Errorf("error loading values: %s", err)
 	}
 
