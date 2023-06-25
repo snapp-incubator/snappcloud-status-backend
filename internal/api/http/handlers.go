@@ -20,7 +20,7 @@ func (server *Server) services(c *gin.Context) {
 		Message  string           `json:"message"`
 		Services []models.Service `json:"services,omitempty"`
 	}{
-		Message:  "All services retrieved successfuly.",
+		Message:  "All services retrieved successfully.",
 		Services: server.querier.GetServices(),
 	})
 }
