@@ -115,14 +115,14 @@ func (q *querier) queryThanos(query string, timestamp string) result {
 		}{}
 
 		if err = json.Unmarshal(rawBody, body); err != nil {
-			q.loggger.Error("Error unmarshaling query result", zap.Error(err))
+			q.logger.Error("Error unmarshalling query result", zap.Error(err))
 			return
 		}
 
 		for index := 0; index < len(body.Data.Result); index++ {
 			if len(body.Data.Result[index].Value) != 2 {
 				resultChannel <- badResult
-				q.loggger.Error("Invalid result value length")
+				q.logger.Error("Invalid result value length")
 				return
 			}
 
@@ -136,7 +136,7 @@ func (q *querier) queryThanos(query string, timestamp string) result {
 			}
 
 			resultChannel <- badResult
-			q.loggger.Error("Invalid result value type, it should be 0 or 1")
+			q.logger.Error("Invalid result value type, it should be 0 or 1")
 			return
 		}
 

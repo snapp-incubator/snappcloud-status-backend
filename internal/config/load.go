@@ -14,8 +14,7 @@ import (
 )
 
 const (
-	delimeter = "."
-	seperator = "__"
+	delimiter = "."
 
 	tagName = "koanf"
 
@@ -24,7 +23,7 @@ const (
 )
 
 func Load(print bool) *Config {
-	k := koanf.New(delimeter)
+	k := koanf.New(delimiter)
 
 	// load default configuration from file
 	if err := LoadValues(k); err != nil {
@@ -62,7 +61,7 @@ func LoadValues(k *koanf.Koanf) error {
 }
 
 func loadConfigmap(k *koanf.Koanf) error {
-	// this is a hack to check wheather we are in cluster or not
+	// this is a hack to check whether we are in cluster or not
 	if _, err := rest.InClusterConfig(); err != nil {
 		if err == rest.ErrNotInCluster {
 			return nil
@@ -75,7 +74,7 @@ func loadConfigmap(k *koanf.Koanf) error {
 		panic(fmt.Errorf("error reading currnet namespace: %v", err))
 	}
 
-	if err := k.Load(rawbytes.Provider(cm), nil); err != nil {
+	if err := k.Load(rawbytes.Provider(cm), yaml.Parser()); err != nil {
 		return fmt.Errorf("error loading values: %s", err)
 	}
 

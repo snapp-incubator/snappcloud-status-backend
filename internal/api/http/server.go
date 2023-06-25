@@ -23,10 +23,10 @@ func New(log *zap.Logger, querier querier.Querier) *Server {
 	// expose metrics to prometheus server
 	server.engine.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
-	// healthness endpoints
-	healthz := server.engine.Group("healthz")
-	healthz.GET("/liveness", server.liveness)
-	healthz.GET("/readiness", server.readiness)
+	// health endpoints
+	healthZ := server.engine.Group("healthz")
+	healthZ.GET("/liveness", server.liveness)
+	healthZ.GET("/readiness", server.readiness)
 
 	v1 := server.engine.Group("api/v1")
 	v1.GET("/services", server.services)

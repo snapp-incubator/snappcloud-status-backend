@@ -26,17 +26,17 @@ func (cmd Server) Command(trap chan os.Signal) *cobra.Command {
 }
 
 func (cmd *Server) main(cfg *config.Config, trap chan os.Signal) {
-	logger := logger.NewZap(cfg.Logger)
+	loggerObj := logger.NewZap(cfg.Logger)
 
-	querier := querier.New(cfg.Querier, logger)
-	go querier.Start()
+	querierObj := querier.New(cfg.Querier, loggerObj)
+	go querierObj.Start()
 
-	server := http.New(logger, querier)
+	server := http.New(loggerObj, querierObj)
 	go server.Serve(8080)
 
 	// Keep this at the bottom of the main function
 	field := zap.String("signal trap", (<-trap).String())
-	logger.Info("exiting by receiving a unix signal", field)
+	loggerObj.Info("exiting by receiving a unix signal", field)
 
-	querier.Stop()
+	querierObj.Stop()
 }
