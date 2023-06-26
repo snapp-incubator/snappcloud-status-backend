@@ -7,20 +7,20 @@ import (
 	"github.com/snapp-incubator/snappcloud-status-backend/internal/models"
 )
 
-func (handler *Server) liveness(c *gin.Context) {
+func (server *Server) liveness(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func (handler *Server) readiness(c *gin.Context) {
+func (server *Server) readiness(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func (handler *Server) services(c *gin.Context) {
+func (server *Server) services(c *gin.Context) {
 	c.JSON(http.StatusOK, &struct {
 		Message  string           `json:"message"`
 		Services []models.Service `json:"services,omitempty"`
 	}{
-		Message:  "All services retrieved successfuly.",
-		Services: handler.querier.GetServices(),
+		Message:  "All services retrieved successfully.",
+		Services: server.querier.GetServices(),
 	})
 }

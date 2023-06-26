@@ -16,8 +16,8 @@ type Querier interface {
 }
 
 type querier struct {
-	config  *Config
-	loggger *zap.Logger
+	config *Config
+	logger *zap.Logger
 
 	ticker *time.Ticker
 	done   chan bool
@@ -33,7 +33,7 @@ type state struct {
 }
 
 func New(cfg *Config, lg *zap.Logger) Querier {
-	instance := &querier{config: cfg, loggger: lg}
+	instance := &querier{config: cfg, logger: lg}
 
 	instance.ticker = time.NewTicker(cfg.RequestInterval)
 	instance.done = make(chan bool)
@@ -59,7 +59,7 @@ func (q *querier) initializeState() {
 	}
 }
 
-// Start, run this function in a seperate goroutine
+// Start run this function in a separate goroutine
 func (q *querier) Start() {
 	for {
 		select {
