@@ -3,10 +3,22 @@ name: ci
 
 on:
   push:
-    tags:        
-      - '**'
+    branches: [ main ]
+    tags: [ '**' ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
+          args: --timeout 5m
   test:
     name: test
     runs-on: ubuntu-latest
@@ -25,6 +37,7 @@ jobs:
     permissions:
       packages: write
     needs:
+      - lint
       - test
     steps:
       - uses: actions/checkout@v3

@@ -10,16 +10,15 @@ import (
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/rawbytes"
 	"github.com/knadh/koanf/v2"
-	"k8s.io/client-go/rest"
 )
 
 const (
-	delimiter = "."
-
-	tagName = "koanf"
-
+	delimiter      = "."
+	tagName        = "koanf"
 	upTemplate     = "================ Loaded Configuration ================"
 	bottomTemplate = "======================================================"
+	productionEnv  = "Production"
+	stagingEnv     = "Staging"
 )
 
 func Load(print bool) *Config {
@@ -61,12 +60,8 @@ func LoadValues(k *koanf.Koanf) error {
 }
 
 func loadConfigmap(k *koanf.Koanf) error {
-	// this is a hack to check whether we are in cluster or not
-	if _, err := rest.InClusterConfig(); err != nil {
-		if err == rest.ErrNotInCluster {
-			return nil
-		}
-		panic(fmt.Errorf("error creating Kubernetes config: \n%v", err))
+	if os.Getenv("ENVIRONMENT") != productionEnv {
+		return nil
 	}
 
 	cm, err := os.ReadFile("/etc/snappcloud-status-backend/configs.yml")
