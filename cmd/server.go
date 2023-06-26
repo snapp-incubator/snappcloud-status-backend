@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/snapp-incubator/snappcloud-status-backend/internal/api/http"
@@ -32,7 +33,12 @@ func (cmd *Server) main(cfg *config.Config, trap chan os.Signal) {
 	go querierObj.Start()
 
 	server := http.New(loggerObj, querierObj)
-	go server.Serve(8080)
+	go func() {
+		err := server.Serve(8080)
+		if err != nil {
+			panic(fmt.Errorf("error on Serve function: %s", err))
+		}
+	}()
 
 	// Keep this at the bottom of the main function
 	field := zap.String("signal trap", (<-trap).String())

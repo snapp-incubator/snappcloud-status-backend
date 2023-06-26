@@ -39,6 +39,11 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: {{ .Values.service.protocol }}
+          env:
+            - name: ENVIRONMENT
+              value: Production
+            - name: GIN_MODE
+              value: release
           livenessProbe:
             httpGet:
               path: /healthz/liveness
