@@ -5,7 +5,7 @@ kind: Route
 metadata:
   name: {{ include "snappcloud-status-backend.fullname" $ }}
 spec:
-  host: "{{ include "snappcloud-status-backend.fullname" $ }}.{{ .Release.Namespace }}.apps.private.{{ .Values.hostname }}"
+  host: "status-be.apps.private.{{ .Values.hostname }}"
   port:
     targetPort: {{ $.Values.service.port }}
   to:
