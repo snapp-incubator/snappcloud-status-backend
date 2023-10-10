@@ -13,18 +13,18 @@ configs:
       - order: 2
         name: "IaaS"
         queries:
-          disruption: 'sum by (job, instance_id) (increase(openstack_nova_server_status{status="ACTIVE"}[5m])) > 0'
-          outage: 'sum(openstack_nova_up == 0) > 0 '
+          disruption: '((sum(rate(openstack_cinder_volume_status{status=~"error.*"}[5m]))) and (sum(rate(openstack_nova_server_status{status="UNKNOWN"}[5m])))) > 0'
+          outage: '(openstack_cinder_up and openstack_nova_up) == 0'
       - order: 3
         name: "Routes"
         queries:
           disruption: 'sum by (router_name) (changes(openshift_route_status{status="True"}[1h])) > 1'
           outage: 'count by (router_name) (openshift_route_status{status="True"}) == 0'
       - order: 4
-        name: "Storage"
+        name: "Storage: S3"
         queries:
-          disruption: 'rate(ceph_osd_recovery_ops[5m]) > 0 '
-          outage: 'absent(ceph_health_status==1) == 0'
+          disruption: '(sum(rate(radosgw_usage_ops_total[5m])) == 0) and (ceph_health_status == 1)'
+          outage: '(sum(rate(radosgw_usage_ops_total[10m])) == 0) and (ceph_health_status == 2)'
       - order: 5
         name: "Container Registry"
         queries:
@@ -32,17 +32,16 @@ configs:
           outage: '(avg by (cluster_id) (harbor_up)) == 0'
       - order: 6
         name: "Service LoadBalancer (L4)"
-        status: 'Available'
         queries:
-          disruption: ''
-          outage: ''
+          disruption: 'sum by (name) (increase(health_http_requests_total{status_code!="200",name="svc-lb"}[2m])) / on(name) group_left() sum by (name) (increase(health_http_requests_total{name="svc-lb"}[2m])) * 100 > 2.5'
+          outage: 'sum by (name) (increase(health_http_requests_total{status_code!="200",name="svc-lb"}[2m])) / on(name) group_left() sum by (name) (increase(health_http_requests_total{name="svc-lb"}[2m])) * 100 > 10'
       - order: 7
         name: "Ingress (L7)"
         queries:
-          disruption: 'sum(changes(contour_httpproxy_valid[1h])) < sum(changes(contour_httpproxy_invalid[1h]))'
-          outage: '(envoy_cluster_upstream_rq_xx{envoy_cluster_name="primary"}) == 0'
+          disruption: 'sum by (name) (increase(health_http_requests_total{status_code!="200",name=~"(inter-dc|public|private).*"}[2m])) / on(name) group_left() sum by (name) (increase(health_http_requests_total{name=~"(inter-dc|public|private).*"}[2m])) * 100 > 2.5'
+          outage: 'sum by (name) (increase(health_http_requests_total{status_code!="200",name=~"(inter-dc|public|private).*"}[2m])) / on(name) group_left() sum by (name) (increase(health_http_requests_total{name=~"(inter-dc|public|private).*"}[2m])) * 100 > 10'
       - order: 8
-        name: "Proxy"
+        name: "Proxy" #TODO
         status: 'Available'
         queries:
           disruption: ''
@@ -50,8 +49,8 @@ configs:
       - order: 9
         name: "Monitoring"
         queries:
-          disruption: '(sum(thanos_status{check="healthy"}) < (count(thanos_status)/2)) or (rate(prometheus_http_requests_total{code=~"5.."}[5m]) > 0)'
-          outage: '(sum(thanos_status{check="healthy"}) == 0) or (up{job="prometheus-operator"} == 0)'
+          disruption: 'sum(rate(container_cpu_usage_seconds_total{job="kubelet", namespace=~".*-monitoring"}[5m])) > 50 or sum(rate(container_cpu_usage_seconds_total{job="kubelet", namespace=~".*-monitoring"}[5m])) < 30'
+          outage: 'up{job=~"monitoring/default"} == 0'
       - order: 10
         name: "Logging"
         queries:
