@@ -16,52 +16,47 @@ configs:
           disruption: '((sum(rate(openstack_cinder_volume_status{status=~"error.*"}[5m]))) and (sum(rate(openstack_nova_server_status{status="UNKNOWN"}[5m])))) > 0'
           outage: '(openstack_cinder_up and openstack_nova_up) == 0'
       - order: 3
-        name: "Routes"
-        queries:
-          disruption: 'sum by (router_name) (changes(openshift_route_status{status="True"}[1h])) > 1'
-          outage: 'count by (router_name) (openshift_route_status{status="True"}) == 0'
-      - order: 4
         name: "Storage: S3"
         queries:
           disruption: '(sum(rate(radosgw_usage_ops_total[5m])) == 0) and (ceph_health_status == 1)'
           outage: '(sum(rate(radosgw_usage_ops_total[10m])) == 0) and (ceph_health_status == 2)'
-      - order: 5
-        name: "Container Registry"
+      - order: 4
+        name: "Container Registry" #TODO: change queries
         queries:
           disruption: 'rate(harbor_core_http_request_total[5m]) > 100'
           outage: '(avg by (cluster_id) (harbor_up)) == 0'
-      - order: 6
+      - order: 5
         name: "Service LoadBalancer (L4)"
         queries:
           disruption: 'sum by (name) (increase(health_http_requests_total{status_code!="200",name="svc-lb"}[2m])) / on(name) group_left() sum by (name) (increase(health_http_requests_total{name="svc-lb"}[2m])) * 100 > 2.5'
           outage: 'sum by (name) (increase(health_http_requests_total{status_code!="200",name="svc-lb"}[2m])) / on(name) group_left() sum by (name) (increase(health_http_requests_total{name="svc-lb"}[2m])) * 100 > 10'
-      - order: 7
+      - order: 6
         name: "Ingress (L7)"
         queries:
           disruption: 'sum by (name) (increase(health_http_requests_total{status_code!="200",name=~"(inter-dc|public|private).*"}[2m])) / on(name) group_left() sum by (name) (increase(health_http_requests_total{name=~"(inter-dc|public|private).*"}[2m])) * 100 > 2.5'
           outage: 'sum by (name) (increase(health_http_requests_total{status_code!="200",name=~"(inter-dc|public|private).*"}[2m])) / on(name) group_left() sum by (name) (increase(health_http_requests_total{name=~"(inter-dc|public|private).*"}[2m])) * 100 > 10'
-      - order: 8
+      - order: 7
         name: "Proxy" #TODO
         status: 'Available'
         queries:
           disruption: ''
           outage: ''
-      - order: 9
+      - order: 8
         name: "Monitoring"
         queries:
           disruption: 'sum(rate(container_cpu_usage_seconds_total{job="kubelet", namespace=~".*-monitoring"}[5m])) > 50 or sum(rate(container_cpu_usage_seconds_total{job="kubelet", namespace=~".*-monitoring"}[5m])) < 30'
           outage: 'up{job=~"monitoring/default"} == 0'
-      - order: 10
+      - order: 9
         name: "Logging"
         queries:
-          disruption: 'sum(increase(logging_resource_state{status="inactive"}[5m])) < 0'
-          outage: 'up{namespace="snappcloud-logging"} == 0'
-      - order: 11
+          disruption: 'sum(rate(loki_request_duration_seconds_count{status_code!="200"}[5m])) / sum(rate(loki_request_duration_seconds_count{status_code="200"}[5m])) < 100 and sum(rate(loki_request_duration_seconds_count{status_code!="200"}[5m])) / sum(rate(loki_request_duration_seconds_count{status_code="200"}[5m])) > 350'
+          outage: 'sum(rate(loki_request_duration_seconds_count{status_code!="200"}[5m])) / sum(rate(loki_request_duration_seconds_count{status_code="200"}[5m])) < 76 and sum(rate(loki_request_duration_seconds_count{status_code!="200"}[5m])) / sum(rate(loki_request_duration_seconds_count{status_code="200"}[5m])) > 375'
+      - order: 10
         name: "Traffic observability: Hubble"
         queries:
-          disruption: 'sum(sum by (verdict) ((hubble_flows_processed_total) unless hubble_flows_processed_total{verdict="DROPPED"})) < sum(hubble_drop_total)'
-          outage: 'sum(sum by (verdict) ((hubble_flows_processed_total) unless hubble_flows_processed_total{verdict="DROPPED"})) == 0'
-      - order: 12
+          disruption: 'sum(rate(hubble_flows_processed_total[2m])) < 100000'
+          outage: 'sum (rate(hubble_flows_processed_total[2m])) < 1000'
+      - order: 11
         name: "ArgoCD"
         queries:
           disruption: 'sum(argocd_app_info{health_status="Progressing"}) >= (count(argocd_app_info)/2)'
