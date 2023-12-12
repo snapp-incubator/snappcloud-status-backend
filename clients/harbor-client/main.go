@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/containers/image/docker"
 	"github.com/containers/image/types"
+	"github.com/joho/godotenv"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -40,7 +42,19 @@ func pullImage(imageRef types.ImageReference) {
 }
 
 func main() {
-	imageRef, err := docker.ParseReference("//core.harbor.domain/test-project/busybox:test-tag") // The "//" at the first of the harbor URL is necessary.
+	// Load environment variables from a file, if present
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Error loading .env file:", err)
+	}
+
+	// Get the image reference from the environment variable
+	imageRefStr := os.Getenv("IMAGE_REFERENCE")
+	if imageRefStr == "" {
+		log.Fatal("IMAGE_REFERENCE environment variable not set")
+	}
+
+	imageRef, err := docker.ParseReference(imageRefStr)
 	if err != nil {
 		log.Fatal("Error parsing image reference:", err)
 	}

@@ -1,0 +1,28 @@
+name: Release Helm Chart
+
+on:
+  push:
+    tags:
+      - 'harbor-release-v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Package Helm Charts
+        run: |
+          helm package clients/harbor-client/deploy -d clients/helm-charts
+      - name: Determine Chart to Publish
+        id: determine_chart
+        run: |
+          CHART_TO_PUBLISH=$(find clients/helm-charts -type f -name '*.tgz' | head -n 1)
+          echo "Chart to publish: $CHART_TO_PUBLISH"
+          echo "::set-output name=chart_to_publish::$CHART_TO_PUBLISH"
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ steps.determine_chart.outputs.chart_to_publish }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
