@@ -8,7 +8,7 @@ RUN go mod download
 
 RUN go build -o harbor-client .
 
-ENV IMAGE_REFERENCE "//core.harbor.domain/test-project/busybox:test-tag" 
+ENV IMAGE_REFERENCE "empty ref" 
 
 EXPOSE 8080
 
