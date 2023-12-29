@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: core.harbor.domain/test-project/harbor-health-client:latest
+  repository: ghcr.io/snapp-incubator/snappcloud-status-backend
   pullPolicy: Always
   tag: "0.0.1"
 
