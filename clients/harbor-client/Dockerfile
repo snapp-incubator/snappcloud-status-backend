@@ -1,15 +1,19 @@
-FROM golang:1.16-alpine
+FROM golang:alpine AS builder
 
-WORKDIR /client
+WORKDIR /go/src/app
 
 COPY . .
 
-RUN go mod download
+RUN go build -o app
 
-RUN go build -o harbor-client .
+FROM alpine:latest
 
-ENV IMAGE_REFERENCE "empty ref" 
+WORKDIR /app
+
+COPY --from=builder /go/src/app/app .
+
+ENV IMAGE_REFERENCE="The image reference URL starts with //."
 
 EXPOSE 8080
 
-CMD ["./harbor-client"]
+CMD ["./app"]

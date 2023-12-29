@@ -33,7 +33,7 @@ spec:
             - name: IMAGE_REFERENCE
               valueFrom:
                 secretKeyRef:
-                  name: spcld-harbor-client-url
+                  name: {{ .Values.configSecretName }}
                   key: IMAGE_REFERENCE
       {{- with .Values.nodeSelector }}
       nodeSelector:

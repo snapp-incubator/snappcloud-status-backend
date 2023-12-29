@@ -42,13 +42,11 @@ func pullImage(imageRef types.ImageReference) {
 }
 
 func main() {
-	// Load environment variables from a file, if present
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("Error loading .env file:", err)
 	}
 
-	// Get the image reference from the environment variable
 	imageRefStr := os.Getenv("IMAGE_REFERENCE")
 	if imageRefStr == "" {
 		log.Fatal("IMAGE_REFERENCE environment variable not set")
@@ -59,18 +57,14 @@ func main() {
 		log.Fatal("Error parsing image reference:", err)
 	}
 
-	// Register the metrics handler
 	http.Handle("/metrics", promhttp.Handler())
 
-	// Start HTTP server in a goroutine
 	go func() {
 		log.Fatal(http.ListenAndServe(":8080", nil))
 	}()
 
-	// Initial image pull
 	pullImage(imageRef)
 
-	// Schedule image pull every 5 minutes
 	ticker := time.NewTicker(5 * time.Minute)
 	defer ticker.Stop()
 
