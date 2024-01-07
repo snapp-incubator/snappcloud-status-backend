@@ -23,8 +23,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          #TODO: another directory path should be added to for loop
-          for dir in clients/harbor-client; do 
+          for dir in clients/*/; do 
             docker buildx build \
               --file $dir/Dockerfile \
               --tag ghcr.io/${{ github.repository }}/$dir:latest \

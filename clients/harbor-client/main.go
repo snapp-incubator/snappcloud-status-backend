@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/containers/image/docker"
@@ -68,7 +70,25 @@ func main() {
 	ticker := time.NewTicker(5 * time.Minute)
 	defer ticker.Stop()
 
-	for range ticker.C {
-		pullImage(imageRef)
+	ctx, cancel := context.WithCancel(context.Background())
+
+	// Handle signals for graceful shutdown
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-signalCh
+		log.Println("Received signal, shutting down gracefully...")
+		cancel()
+	}()
+
+	for {
+		select {
+		case <-ctx.Done():
+			log.Println("Shutting down...")
+			return
+		case <-ticker.C:
+			pullImage(imageRef)
+		}
 	}
 }

@@ -35,15 +35,12 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.configSecretName }}
                   key: IMAGE_REFERENCE
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
+          {{ .Values.nodeSelector | toYaml | nindent 8 }}
       tolerations:
+        {{- with .Values.tolerations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
+        {{- end }}
       affinity:
+        {{- with .Values.affinity }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
