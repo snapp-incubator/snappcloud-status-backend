@@ -12,7 +12,6 @@ import (
 
 	"github.com/containers/image/docker"
 	"github.com/containers/image/types"
-	"github.com/joho/godotenv"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -44,11 +43,6 @@ func pullImage(imageRef types.ImageReference) {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Error loading .env file:", err)
-	}
-
 	imageRefStr := os.Getenv("IMAGE_REFERENCE")
 	if imageRefStr == "" {
 		log.Fatal("IMAGE_REFERENCE environment variable not set")
@@ -72,7 +66,6 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	// Handle signals for graceful shutdown
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, syscall.SIGINT, syscall.SIGTERM)
 
