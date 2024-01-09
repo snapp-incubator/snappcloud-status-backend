@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "snappcloud-harbor-client.fullname" . }}
+  labels:
+    {{- include "snappcloud-harbor-client.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+  selector:
+    {{- include "snappcloud-harbor-client.selectorLabels" . | nindent 4 }}
