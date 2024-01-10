@@ -23,10 +23,11 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          for dir in clients/*/; do 
+          for dir in clients/*/; do
+          trimmed_dir=${dir::-1} 
             docker buildx build \
               --file $dir/Dockerfile \
-              --tag ghcr.io/${{ github.repository }}/$dir:latest \
+              --tag ghcr.io/${{ github.repository }}/$trimmed_dir:latest \
               $dir
-            docker push ghcr.io/${{ github.repository }}/$dir:latest
+            docker push ghcr.io/${{ github.repository }}/$trimmed_dir:latest
           done
