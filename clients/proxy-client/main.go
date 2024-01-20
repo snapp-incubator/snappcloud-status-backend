@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -27,18 +26,14 @@ func init() {
 	prometheus.MustRegister(successMetric)
 }
 
-func checkProxy(proxyURL, targetURL string) error {
-	if proxyURL == "" {
-		return fmt.Errorf("PROXY_URL environment variable not set")
-	}
-
+func checkProxy(ctx context.Context, proxyURL, targetURL string) error {
 	client := &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(mustParseURL(proxyURL)),
 		},
 	}
 
-	req, err := http.NewRequest("HEAD", targetURL, nil)
+	req, err := http.NewRequestWithContext(ctx, "HEAD", targetURL, nil)
 	if err != nil {
 		return err
 	}
@@ -75,7 +70,7 @@ func main() {
 	go func() {
 		err := http.ListenAndServe(":9090", nil)
 		if err != nil {
-			fmt.Printf("Error starting Prometheus HTTP server: %s\n", err)
+			log.Printf("Error starting Prometheus HTTP server: %s\n", err)
 			os.Exit(1)
 		}
 	}()
@@ -91,24 +86,34 @@ func main() {
 
 	go func() {
 		<-signalCh
-		log.Println("Shutting down gracefully...")
+		log.Println("Received signal, shutting down gracefully...")
 		cancel()
 	}()
 
-	go func() {
-		defer wg.Done()
-		var tickerFunc func()
-		tickerFunc = func() {
-			if err := checkProxy(proxyURL, targetURL); err != nil {
-				log.Printf("Proxy check failed: %s\n", err)
-			}
-			time.AfterFunc(5*time.Minute, tickerFunc)
-		}
-		tickerFunc()
+	defer wg.Done()
+
+	defer func() {
+		log.Println("Waiting for all goroutines to finish...")
+		wg.Wait()
+		log.Println("All goroutines shut down. Exiting.")
 	}()
 
-	<-ctx.Done()
-	wg.Wait()
-	fmt.Println("All goroutines shut down. Exiting.")
-	os.Exit(0)
+	ticker := time.NewTicker(5 * time.Minute)
+	defer ticker.Stop()
+
+	tickerFunc := func() {
+		if err := checkProxy(ctx, proxyURL, targetURL); err != nil {
+			log.Printf("Proxy check failed: %s\n", err)
+		}
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			log.Println("Shutting down...")
+			return
+		case <-ticker.C:
+			tickerFunc()
+		}
+	}
 }
