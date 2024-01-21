@@ -46,20 +46,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/metadata-action@v3
-        id: meta
-        with:
-          images: ghcr.io/${{ github.repository }}/${{ matrix.dir }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
       - uses: docker/build-push-action@v2
         with:
           file: "${{ matrix.dir }}/Dockerfile"
-          context: .
+          context: ${{ matrix.dir }}
           platforms: linux/amd64
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ghcr.io/${{ github.repository }}/${{ matrix.dir }}:${{ github.sha }}
