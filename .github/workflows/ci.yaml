@@ -36,7 +36,7 @@ jobs:
       - test
     strategy:
       matrix:
-        dir: [" ", "clients/proxy-client", "clients/harbor-client"]
+        dir: ["", "clients/proxy-client", "clients/harbor-client"]
     steps:
       - uses: actions/checkout@v2
       - uses: docker/setup-qemu-action@v1
