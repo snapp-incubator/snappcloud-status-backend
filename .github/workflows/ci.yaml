@@ -52,4 +52,4 @@ jobs:
           context: ${{ matrix.dir }}
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository }}/${{ matrix.dir }}:${{ github.sha }}
+          tags: ghcr.io/${{ github.repository }}/${{ matrix.dir }}:latest
