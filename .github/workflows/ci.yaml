@@ -3,10 +3,7 @@ name: ci
 
 on:
   push:
-    branches: [ main ]
-    tags: [ '**' ]
-  pull_request:
-    branches: [ main ]
+    branches: [ Workflows ]
 
 jobs:
   lint:
@@ -37,6 +34,9 @@ jobs:
     needs:
       - lint
       - test
+    strategy:
+      matrix:
+        dir: [" ", "clients/proxy-client", "clients/harbor-client"]
     steps:
       - uses: actions/checkout@v2
       - uses: docker/setup-qemu-action@v1
@@ -49,7 +49,7 @@ jobs:
       - uses: docker/metadata-action@v3
         id: meta
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ghcr.io/${{ github.repository }}/${{ matrix.dir }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -57,7 +57,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
       - uses: docker/build-push-action@v2
         with:
-          file: "Dockerfile"
+          file: "${{ matrix.dir }}/Dockerfile"
           context: .
           platforms: linux/amd64
           push: true
