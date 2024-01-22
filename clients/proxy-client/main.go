@@ -26,7 +26,7 @@ func init() {
 	prometheus.MustRegister(successMetric)
 }
 
-func checkProxy(ctx context.Context, proxyURL, targetURL string) error {
+func checkProxy(ctx context.Context, proxyURL, targetURL string) {
 	client := &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(mustParseURL(proxyURL)),
@@ -35,20 +35,22 @@ func checkProxy(ctx context.Context, proxyURL, targetURL string) error {
 
 	req, err := http.NewRequestWithContext(ctx, "HEAD", targetURL, nil)
 	if err != nil {
-		return err
+		log.Printf("Error creating HTTP request: %s\n", err)
+		return
 	}
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		log.Printf("Error performing HTTP request: %s\n", err)
+		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
 		successMetric.Inc()
+	} else {
+		log.Printf("Proxy check failed. Status code: %d\n", resp.StatusCode)
 	}
-
-	return nil
 }
 
 func mustParseURL(rawURL string) *url.URL {
@@ -67,13 +69,10 @@ func main() {
 	targetURL := "https://ifconfig.me"
 
 	http.Handle("/metrics", promhttp.Handler())
-	go func() {
-		err := http.ListenAndServe(":9090", nil)
-		if err != nil {
-			log.Printf("Error starting Prometheus HTTP server: %s\n", err)
-			os.Exit(1)
-		}
-	}()
+
+	server := &http.Server{
+		Addr: ":9090",
+	}
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -88,32 +87,34 @@ func main() {
 		<-signalCh
 		log.Println("Received signal, shutting down gracefully...")
 		cancel()
+		server.Shutdown(ctx)
 	}()
 
 	defer wg.Done()
 
 	defer func() {
-		log.Println("Waiting for all goroutines to finish...")
+		log.Println("Waiting for the HTTP server to finish...")
 		wg.Wait()
 		log.Println("All goroutines shut down. Exiting.")
 	}()
 
-	ticker := time.NewTicker(5 * time.Minute)
-	defer ticker.Stop()
+	tickerDone := make(chan struct{})
+	go func() {
+		defer close(tickerDone)
+		ticker := time.NewTicker(5 * time.Minute)
+		defer ticker.Stop()
 
-	tickerFunc := func() {
-		if err := checkProxy(ctx, proxyURL, targetURL); err != nil {
-			log.Printf("Proxy check failed: %s\n", err)
+		for {
+			select {
+			case <-ctx.Done():
+				log.Println("Ticker routine shutting down...")
+				return
+			case <-ticker.C:
+				checkProxy(ctx, proxyURL, targetURL)
+			}
 		}
-	}
+	}()
 
-	for {
-		select {
-		case <-ctx.Done():
-			log.Println("Shutting down...")
-			return
-		case <-ticker.C:
-			tickerFunc()
-		}
-	}
+	log.Fatal(server.ListenAndServe())
+	<-tickerDone
 }
