@@ -27,13 +27,14 @@ func init() {
 }
 
 func checkProxy(ctx context.Context, proxyURL, targetURL string) {
+	transport, _ := http.DefaultTransport.(*http.Transport)
+	transport.Proxy = http.ProxyURL(mustParseURL(proxyURL))
+
 	client := &http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyURL(mustParseURL(proxyURL)),
-		},
+		Transport: transport,
 	}
 
-	req, err := http.NewRequestWithContext(ctx, "HEAD", targetURL, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", targetURL, nil)
 	if err != nil {
 		log.Printf("Error creating HTTP request: %s\n", err)
 		return
@@ -48,6 +49,7 @@ func checkProxy(ctx context.Context, proxyURL, targetURL string) {
 
 	if resp.StatusCode == http.StatusOK {
 		successMetric.Inc()
+		log.Printf("Proxy check succeed, Healthy status.")
 	} else {
 		log.Printf("Proxy check failed. Status code: %d\n", resp.StatusCode)
 	}
