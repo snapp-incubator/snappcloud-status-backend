@@ -75,7 +75,6 @@ func main() {
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(1)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -90,17 +89,9 @@ func main() {
 		server.Shutdown(ctx)
 	}()
 
-	defer wg.Done()
-
-	defer func() {
-		log.Println("Waiting for the HTTP server to finish...")
-		wg.Wait()
-		log.Println("All goroutines shut down. Exiting.")
-	}()
-
-	tickerDone := make(chan struct{})
+	wg.Add(1)
 	go func() {
-		defer close(tickerDone)
+		defer wg.Done()
 		ticker := time.NewTicker(5 * time.Minute)
 		defer ticker.Stop()
 
@@ -115,6 +106,13 @@ func main() {
 		}
 	}()
 
-	log.Fatal(server.ListenAndServe())
-	<-tickerDone
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		log.Fatal(server.ListenAndServe())
+	}()
+
+	log.Println("Waiting for the HTTP server to finish...")
+	wg.Wait()
+	log.Println("All goroutines shut down. Exiting.")
 }
