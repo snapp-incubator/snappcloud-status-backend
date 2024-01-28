@@ -66,4 +66,4 @@ jobs:
           context: ${{ matrix.dir }}
           platforms: linux/amd64
           push: true
-          tags: ${{ steps.tag.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
