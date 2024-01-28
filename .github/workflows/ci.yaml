@@ -38,7 +38,7 @@ jobs:
       - test
     strategy:
       matrix:
-        dir: ["", "clients/proxy-client", "clients/harbor-client"]
+        dir: ['', 'clients/proxy-client', 'clients/harbor-client']
     steps:
       - uses: actions/checkout@v2
       - uses: docker/setup-qemu-action@v1
@@ -61,7 +61,7 @@ jobs:
 
       - uses: docker/build-push-action@v2
         with:
-          file: ${{ matrix.dir == "" && './Dockerfile' || matrix.dir + '/Dockerfile' }}
+          file: ${{ matrix.dir == '' && './Dockerfile' || matrix.dir + '/Dockerfile' }}
           context: ${{ matrix.dir }}
           platforms: linux/amd64
           push: true
