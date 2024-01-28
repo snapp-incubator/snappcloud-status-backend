@@ -1,9 +1,12 @@
 ---
-name: ci
+name: Lint, Test and Image Build CI
 
 on:
   push:
-    branches: [ Workflows ]
+    branches: [ main ]
+    tags: [ '**' ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   lint:
@@ -16,7 +19,6 @@ jobs:
         with:
           version: latest
           args: --timeout 5m
-
   test:
     name: test
     runs-on: ubuntu-latest
@@ -29,7 +31,6 @@ jobs:
       - uses: codecov/codecov-action@v3
         with:
           files: coverage.out
-
   build:
     name: build
     runs-on: ubuntu-latest
@@ -38,7 +39,7 @@ jobs:
       - test
     strategy:
       matrix:
-        dir: ['', 'clients/proxy-client', 'clients/harbor-client']
+        dir: ["", "clients/proxy-client", "clients/harbor-client"]
     steps:
       - uses: actions/checkout@v2
       - uses: docker/setup-qemu-action@v1
@@ -48,21 +49,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: docker/metadata-action@v3
-        id: meta
-        with:
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-          images: ghcr.io/${{ github.repository }}${{ matrix.dir }}
-
       - uses: docker/build-push-action@v2
         with:
-          file: ${{ matrix.dir == '' && './Dockerfile' || matrix.dir + '/Dockerfile' }}
+          file: "${{ matrix.dir }}/Dockerfile"
           context: ${{ matrix.dir }}
           platforms: linux/amd64
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ghcr.io/${{ github.repository }}${{ matrix.dir }}:${{ github.sha }}
