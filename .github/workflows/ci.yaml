@@ -59,8 +59,8 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=semver,pattern=v${{ github.event.release.tag_name }}
-            type=semver,pattern=v${{ github.event.release.tag_name | split('.')[:2] | join('.') }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
           images: ghcr.io/${{ github.repository }}${{ matrix.dir }}
 
       - name: Build and push Docker image
