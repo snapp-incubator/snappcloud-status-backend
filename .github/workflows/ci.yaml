@@ -59,10 +59,9 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
           images: ghcr.io/${{ github.repository }}${{ matrix.dir }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
+      - uses: docker/build-push-action@v2
         with:
-          file: "${{ matrix.dir }}/Dockerfile"
+          file: ${{ matrix.dir == "" && './Dockerfile' || matrix.dir + '/Dockerfile' }}
           context: ${{ matrix.dir }}
           platforms: linux/amd64
           push: true
