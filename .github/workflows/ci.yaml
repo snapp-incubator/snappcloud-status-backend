@@ -16,6 +16,7 @@ jobs:
         with:
           version: latest
           args: --timeout 5m
+
   test:
     name: test
     runs-on: ubuntu-latest
@@ -28,6 +29,7 @@ jobs:
       - uses: codecov/codecov-action@v3
         with:
           files: coverage.out
+
   build:
     name: build
     runs-on: ubuntu-latest
@@ -46,10 +48,26 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Tag Docker image
+        id: tag
+        uses: docker/metadata-action@v3
+        with:
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern=v${{ github.event.release.tag_name }}
+            type=semver,pattern=v${{ github.event.release.tag_name | split('.')[:2] | join('.') }}
+          images: ghcr.io/${{ github.repository }}${{ matrix.dir }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
         with:
           file: "${{ matrix.dir }}/Dockerfile"
           context: ${{ matrix.dir }}
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository }}${{ matrix.dir }}:${{ github.sha }}
+          tags: ${{ steps.tag.outputs.tags }}
