@@ -1,6 +1,6 @@
 apiVersion: v2
 name: snappcloud-proxy-client
-description: A Helm chart for Kubernetes
+description: snappcloud-proxy-client Helm chart
 
 type: application
 version: 0.1.0

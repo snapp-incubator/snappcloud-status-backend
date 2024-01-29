@@ -86,7 +86,7 @@ jobs:
       - build-clients
     strategy:
       matrix:
-        dir: ["charts/server", "clients/proxy-client", "clients/harbor-client"]
+        dir: ["deploymant", "clients/proxy-client", "clients/harbor-client"]
     steps:
       - name: Checkout
         uses: actions/checkout@v3

@@ -1,6 +1,6 @@
 apiVersion: v2
 name: snappcloud-harbor-client
-description: A Helm chart for Kubernetes
+description: snappcloud-harbor-client Helm chart
 
 type: application
 version: 0.1.0
