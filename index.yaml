@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  snappcloud-harbor-client:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2024-01-31T13:18:35.503789276Z"
+    description: snappcloud-harbor-client Helm chart
+    digest: dfa876b691cb8814638d12cfd4dd76391806869bae9bba9d4ab8209838ef9d14
+    name: snappcloud-harbor-client
+    type: application
+    urls:
+    - https://github.com/snapp-incubator/snappcloud-status-backend/releases/download/snappcloud-harbor-client-0.1.0/snappcloud-harbor-client-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-01-31T13:18:35.503806319Z"
