@@ -11,4 +11,15 @@ entries:
     urls:
     - https://github.com/snapp-incubator/snappcloud-status-backend/releases/download/snappcloud-harbor-client-0.1.0/snappcloud-harbor-client-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-31T13:18:35.503806319Z"
+  snappcloud-proxy-client:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2024-01-31T14:03:28.575758521Z"
+    description: snappcloud-proxy-client Helm chart
+    digest: 0de1cde17970eb69df911b83f13b28397adc7870c9579556021c72464c31d4c3
+    name: snappcloud-proxy-client
+    type: application
+    urls:
+    - https://github.com/snapp-incubator/snappcloud-status-backend/releases/download/snappcloud-proxy-client-0.1.0/snappcloud-proxy-client-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-01-31T14:03:28.575770123Z"
