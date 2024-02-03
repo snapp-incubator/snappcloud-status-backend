@@ -1,6 +1,6 @@
 apiVersion: v2
 name: snappcloud-harbor-client
-description: snappcloud-harbor-client Helm chart
+description: A Helm chart for snappcloud-harbor-client
 
 type: application
 version: 0.1.0
