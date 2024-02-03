@@ -3,7 +3,10 @@ name: Lint, Test, Image Build and Chart release
 
 on:
   push:
-    branches: [ Workflows ]
+    branches: [ main ]
+    tags: [ '**' ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   lint:
