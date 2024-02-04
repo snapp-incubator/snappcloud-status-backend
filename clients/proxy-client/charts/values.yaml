@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/snapp-incubator/snappcloud-status-backend
+  repository: ghcr.io/snapp-incubator/snappcloud-status-backend/clients/proxy-client
   pullPolicy: Always
   tag: "0.0.1"
 
@@ -34,4 +34,4 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-configSecretName: spcld-harbor-health-client
+configSecretName: spcld-proxy-health-client
