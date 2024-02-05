@@ -3,17 +3,14 @@ replicaCount: 1
 image:
   repository: ghcr.io/snapp-incubator/snappcloud-status-backend/clients/proxy-client
   pullPolicy: Always
-  tag: "0.0.1"
+  tag: "0.1.0"
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-serviceAccount:
-  create: false
-  automount: true
-  annotations: {}
-  name: ""
+podAnnotations: {}
+podLabels: {}
 
 service:
   type: ClusterIP
@@ -32,6 +29,5 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 configSecretName: spcld-proxy-health-client
