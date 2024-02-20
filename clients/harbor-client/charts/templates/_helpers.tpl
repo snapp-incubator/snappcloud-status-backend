@@ -31,18 +31,6 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Common labels
-*/}}
-{{- define "snappcloud-harbor-client.labels" -}}
-helm.sh/chart: {{ include "snappcloud-harbor-client.chart" . }}
-{{ include "snappcloud-harbor-client.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
-
-{{/*
 Selector labels
 */}}
 {{- define "snappcloud-harbor-client.selectorLabels" -}}
