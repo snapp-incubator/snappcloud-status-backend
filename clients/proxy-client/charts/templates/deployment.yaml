@@ -29,8 +29,8 @@ spec:
           env:
             - name: PROXY_URL
               valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.configSecretName }}
+                configMapKeyRef:
+                  name: {{ .Values.configMapName }}
                   key: PROXY_URL
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

@@ -29,8 +29,8 @@ spec:
           env:
             - name: IMAGE_REFERENCE
               valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.configSecretName }}
+                configMapKeyRef:
+                  name: {{ .Values.configMapName }}
                   key: IMAGE_REFERENCE
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

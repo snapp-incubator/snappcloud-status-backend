@@ -30,4 +30,6 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
 
-configSecretName: spcld-harbor-health-client
+configMapName: spcld-harbor-health-client
+
+imageReference: registry.com/repo/image:latest
