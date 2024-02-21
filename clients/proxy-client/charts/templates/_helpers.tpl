@@ -42,6 +42,7 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
+{{/*
 Selector labels
 */}}
 {{- define "snappcloud-proxy-client.selectorLabels" -}}
