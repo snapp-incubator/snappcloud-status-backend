@@ -7,7 +7,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {{- include "snappcloud-harbor-client.selectorLabels" . | nindent 4 }}
+      {{- include "snappcloud-harbor-client.selectorLabels" . | nindent 6 }}
   endpoints:
   - port: http
     interval: 30s
