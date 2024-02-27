@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "snappcloud-harbor-client.fullname" .  }}
+  name: {{ include "snappcloud-harbor-client.fullname" . }}
   labels:
     {{- include "snappcloud-harbor-client.labels" . | nindent 4 }}
     {{- if .Values.commonLabels }}
