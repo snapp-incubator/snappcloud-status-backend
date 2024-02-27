@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "snappcloud-harbor-client.fullname" . }}
+  labels:
+    {{- include "snappcloud-harbor-client.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "snappcloud-harbor-client.selectorLabels" . | nindent 4 }}
+  endpoints:
+  - port: http
+    interval: 30s

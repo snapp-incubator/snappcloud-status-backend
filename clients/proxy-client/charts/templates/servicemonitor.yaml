@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "snappcloud-proxy-client.fullname" . }}
+  labels:
+    {{- include "snappcloud-proxy-client.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "snappcloud-proxy-client.selectorLabels" . | nindent 4 }}
+  endpoints:
+  - port: http
+    interval: 30s
