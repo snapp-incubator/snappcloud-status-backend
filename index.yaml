@@ -23,6 +23,16 @@ entries:
     version: 0.1.0
   snappcloud-proxy-client:
   - apiVersion: v2
+    appVersion: 0.0.3
+    created: "2024-02-27T13:19:49.778620471Z"
+    description: A Helm chart for snappcloud-proxy-client
+    digest: dfaffaa6f033d32aeefeefbfbea8d0df607db9cd4390f2ec1cb23976de85e45a
+    name: snappcloud-proxy-client
+    type: application
+    urls:
+    - https://github.com/snapp-incubator/snappcloud-status-backend/releases/download/snappcloud-proxy-client-0.1.2/snappcloud-proxy-client-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
     appVersion: 0.0.2
     created: "2024-02-13T11:56:00.953868583Z"
     description: A Helm chart for snappcloud-proxy-client
@@ -42,4 +52,4 @@ entries:
     urls:
     - https://github.com/snapp-incubator/snappcloud-status-backend/releases/download/snappcloud-proxy-client-0.1.0/snappcloud-proxy-client-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-13T11:56:00.953895241Z"
+generated: "2024-02-27T13:19:49.778668302Z"
