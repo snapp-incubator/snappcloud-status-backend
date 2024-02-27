@@ -1,13 +1,33 @@
+{{- if .Values.serviceMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "snappcloud-harbor-client.fullname" . }}
+  name: {{ template "snappcloud-harbor-client.fullname" .  }}
   labels:
     {{- include "snappcloud-harbor-client.labels" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "snappcloud-harbor-client.tplvalues.render" (dict "value" .Values.commonLabels "context" $) | nindent 4 }}
+    {{- end }}
 spec:
-  selector:
-    matchLabels:
-      {{- include "snappcloud-harbor-client.selectorLabels" . | nindent 6 }}
   endpoints:
   - port: http
     interval: 30s
+    {{- if .Values.serviceMonitor.scrapeTimeout }}
+    scrapeTimeout: {{ .Values.serviceMonitor.scrapeTimeout }}
+    {{- end }}
+    path: /metrics
+    honorLabels: {{ .Values.serviceMonitor.honorLabels }}
+    {{- if .Values.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+    {{- tpl (toYaml .Values.serviceMonitor.metricRelabelings | nindent 4) . }}
+    {{- end }}
+    {{- if .Values.serviceMonitor.relabelings }}
+    relabelings:
+    {{ toYaml .Values.serviceMonitor.relabelings | nindent 4 }}
+    {{- end }}
+  selector:
+    matchLabels:
+      {{- include "snappcloud-harbor-client.selectorLabels" . | nindent 6 }}
+{{- end -}}
+
+

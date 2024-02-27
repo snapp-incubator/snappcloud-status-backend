@@ -3,5 +3,5 @@ name: snappcloud-harbor-client
 description: A Helm chart for snappcloud-harbor-client
 
 type: application
-version: 0.1.2
+version: 0.1.3
 appVersion: "0.0.3"
