@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   snappcloud-harbor-client:
   - apiVersion: v2
+    appVersion: 0.0.3
+    created: "2024-02-27T13:22:25.287375489Z"
+    description: A Helm chart for snappcloud-harbor-client
+    digest: a2481f4fb6638e9c641052116d94bbd77348f8f8d3abb78f261c7160edb113dc
+    name: snappcloud-harbor-client
+    type: application
+    urls:
+    - https://github.com/snapp-incubator/snappcloud-status-backend/releases/download/snappcloud-harbor-client-0.1.2/snappcloud-harbor-client-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
     appVersion: 0.0.2
     created: "2024-02-05T23:06:56.863460686Z"
     description: A Helm chart for snappcloud-harbor-client
@@ -52,4 +62,4 @@ entries:
     urls:
     - https://github.com/snapp-incubator/snappcloud-status-backend/releases/download/snappcloud-proxy-client-0.1.0/snappcloud-proxy-client-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-27T13:19:49.778668302Z"
+generated: "2024-02-27T13:22:25.287391068Z"
