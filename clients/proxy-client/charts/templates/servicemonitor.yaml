@@ -1,33 +1,14 @@
-{{- if .Values.serviceMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ include "snappcloud-proxy-client.fullname" . }}
   labels:
     {{- include "snappcloud-proxy-client.labels" . | nindent 4 }}
-    {{- if .Values.commonLabels }}
-    {{- include "snappcloud-proxy-client.tplvalues.render" (dict "value" .Values.commonLabels "context" $) | nindent 4 }}
-    {{- end }}
 spec:
   endpoints:
   - port: http
     interval: 30s
-    {{- if .Values.serviceMonitor.scrapeTimeout }}
-    scrapeTimeout: {{ .Values.serviceMonitor.scrapeTimeout }}
-    {{- end }}
     path: /metrics
-    honorLabels: {{ .Values.serviceMonitor.honorLabels }}
-    {{- if .Values.serviceMonitor.metricRelabelings }}
-    metricRelabelings:
-    {{- tpl (toYaml .Values.serviceMonitor.metricRelabelings | nindent 4) . }}
-    {{- end }}
-    {{- if .Values.serviceMonitor.relabelings }}
-    relabelings:
-    {{ toYaml .Values.serviceMonitor.relabelings | nindent 4 }}
-    {{- end }}
   selector:
     matchLabels:
       {{- include "snappcloud-proxy-client.selectorLabels" . | nindent 6 }}
-{{- end -}}
-
-
