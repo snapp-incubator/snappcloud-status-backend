@@ -9,6 +9,9 @@ spec:
   - port: http
     interval: 30s
     path: /metrics
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
   selector:
     matchLabels:
       {{- include "snappcloud-harbor-client.selectorLabels" . | nindent 6 }}
