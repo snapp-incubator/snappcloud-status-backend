@@ -50,4 +50,13 @@ configs:
         queries:
           disruption: 'sum(argocd_app_info{health_status="Progressing"}) >= (count(argocd_app_info)/2)'
           outage: 'argocd_cluster_info == 0'
-
+      - order: 10
+        name: "Container Registry: Harbor"
+        queries:
+          disruption: 'rate(image_pulled_total[5m]) < 0.003 and rate(image_pulled_total[5m]) > 0'
+          outage: 'rate(image_pulled_total[5m]) == 0'
+      - order: 11
+        name: "Proxy"
+        queries:
+          disruption: 'rate(proxy_check_success[5m]) < 0.003 and rate(proxy_check_success[5m]) > 0'
+          outage: 'rate(proxy_check_success[5m]) == 0'
