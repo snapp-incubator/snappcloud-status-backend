@@ -33,7 +33,7 @@ configs:
       - order: 6
         name: "Monitoring"
         queries:
-          disruption: 'sum(rate(container_cpu_usage_seconds_total{job="kubelet", namespace=~".*-monitoring"}[5m])) > 50 or sum(rate(container_cpu_usage_seconds_total{job="kubelet", namespace=~".*-monitoring"}[5m])) < 30'
+          disruption: 'sum(rate(container_cpu_usage_seconds_total{job="kubelet", namespace=~".*-monitoring"}[5m])) > 80'
           outage: 'up{job=~"monitoring/default"} == 0'
       - order: 7
         name: "Logging"
