@@ -43,7 +43,7 @@ configs:
       - order: 8
         name: "Traffic observability: Hubble"
         queries:
-          disruption: 'sum(rate(hubble_flows_processed_total[2m])) < 100000'
+          disruption: 'sum(rate(hubble_flows_processed_total[2m])) < 10000'
           outage: 'sum (rate(hubble_flows_processed_total[2m])) < 1000'
       - order: 9
         name: "ArgoCD"
